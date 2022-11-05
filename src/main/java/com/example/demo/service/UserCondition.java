@@ -44,7 +44,8 @@ public class UserCondition
         return "UserCondition{" +
                 "chatId='" + chatId + '\'' +
                 ", condition='" + condition + '\'' +
-                ", language=" + language +
+                ", language='" + language + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

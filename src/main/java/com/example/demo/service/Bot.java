@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
@@ -60,32 +62,39 @@ public class Bot extends TelegramLongPollingBot
             {
                 startCommand(chatId, update.getMessage().getChat().getFirstName());
                 userCondition.setCondition(BotCondition.SELECT_LANG);
+                chooseLanguage(chatId);
             }
             else if(userCondition.getCondition().equals(BotCondition.SELECT_LANG))
             {
-                if(message.equals("1"))
+                if(message.equals("english"))
                 {
                     sendMessage(chatId, "You chose english");
                     userCondition.setLanguage("english");
-                    userCondition.setCondition(BotCondition.ENTER_MSG);
-                    sendMessage(chatId, "Enter your name");
                 }
-                else if(message.equals("2"))
+                else if(message.equals("russian"))
                 {
                     sendMessage(chatId, "Вы выбрали русский язык");
                     userCondition.setLanguage("russian");
-                    userCondition.setCondition(BotCondition.ENTER_MSG);
-                    sendMessage(chatId, "Введите ваше имя");
                 }
                 else
                 {
                     sendMessage(chatId, "Language not found");
                 }
+                userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                chooseOperation(chatId, userCondition);
             }
             else if(userCondition.getCondition().equals(BotCondition.ENTER_MSG))
             {
                 userCondition.setName(message);
+            }
 
+            else if(userCondition.getCondition().equals(BotCondition.CHOOSE_OPERATION))
+            {
+                if(message.equals("выбор языка") || message.equals("select language"))
+                {
+                    userCondition.setCondition(BotCondition.SELECT_LANG);
+                    chooseLanguage(chatId);
+                }
             }
             else
             {
@@ -96,7 +105,7 @@ public class Bot extends TelegramLongPollingBot
     }
         private void startCommand(String chatId, String username)
         {
-            String tgMessage = "Hi " + username + "!\nPlease choose language: \n1. English\n2.Russian";
+            String tgMessage = "Hi " + username + "!";
             sendMessage(chatId, tgMessage);
         }
 
@@ -111,6 +120,7 @@ public class Bot extends TelegramLongPollingBot
             catch(TelegramApiException e){}
         }
 
+        //Хранение состояния
         private UserCondition saveUser(String chatId)
         {
             for(UserCondition user : users)
@@ -124,5 +134,69 @@ public class Bot extends TelegramLongPollingBot
             user.setChatId(chatId);
             users.add(user);
             return user;
+        }
+
+        private void markup(String chatId, List<KeyboardRow> keyboard, String text)
+        {
+            SendMessage sendMessage = new SendMessage();
+            ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+            sendMessage.setText(text);
+            keyboardMarkup.setKeyboard(keyboard);
+            sendMessage.setReplyMarkup(keyboardMarkup);
+            sendMessage.setChatId(chatId);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void chooseLanguage(String chatId)
+        {
+            String text = "Choose your language: ";
+            List<KeyboardRow> keyboard = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
+            row.add("English");
+            keyboard.add(row);
+            row = new KeyboardRow();
+            row.add("Russian");
+            keyboard.add(row);
+            markup(chatId, keyboard, text);
+        }
+
+        private void chooseOperation(String chatId, UserCondition userCondition)
+        {
+            List<KeyboardRow> keyboard = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
+            String text;
+            if(userCondition.getLanguage().equals("english"))
+            {
+                text = "How can I help you?";
+                row.add("Catalogue");
+                keyboard.add(row);
+                row = new KeyboardRow();
+                row.add("Shopping cart");
+                row.add("Purchase history");
+                keyboard.add(row);
+                row = new KeyboardRow();
+                row.add("Select language");
+                keyboard.add(row);
+                markup(chatId, keyboard, text);
+            }
+            else if(userCondition.getLanguage().equals("russian"))
+            {
+                text = "Как могу помочь?";
+                row.add("Каталог");
+                keyboard.add(row);
+                row = new KeyboardRow();
+                row.add("Корзина");
+                row.add("Исторория покупок");
+                keyboard.add(row);
+                row = new KeyboardRow();
+                row.add("Выбор языка");
+                keyboard.add(row);
+                markup(chatId, keyboard, text);
+            }
         }
 }
