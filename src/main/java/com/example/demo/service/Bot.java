@@ -8,10 +8,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -31,7 +32,7 @@ public class Bot extends TelegramLongPollingBot
         try{
             execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         }
-        catch(TelegramApiException e){}
+        catch(TelegramApiException e){e.printStackTrace();}
 
     }
 
@@ -44,12 +45,11 @@ public class Bot extends TelegramLongPollingBot
     public String getBotToken() {
         return botConfig.getToken();
     }
-
-    private String condition = BotCondition.START;
     List<UserCondition>users = new ArrayList<>();
     @Override
     public void onUpdateReceived(Update update)
     {
+
         if((update.hasMessage() && update.getMessage().hasText()))
         {
             String message = update.getMessage().getText().toLowerCase();
@@ -103,6 +103,8 @@ public class Bot extends TelegramLongPollingBot
                     userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
                     chooseCatalogue(chatId, userCondition);
                 }
+
+
             }
 
             else if(userCondition.getCondition().equals(BotCondition.SELECT_CATALOGUE))
@@ -144,13 +146,76 @@ public class Bot extends TelegramLongPollingBot
                 laptopInfo(chatId, userCondition, message);
             }
 
+            else if(userCondition.getCondition().equals(BotCondition.ENTER_NAME))
+            {
+                if(userCondition.getLanguage().equals("russian"))
+                {
+                    sendMessage(chatId, "Введите номер карты которую хотите привязать");
+                    userCondition.setCondition(BotCondition.ENTER_CARD);
+                }
+                else
+                {
+                    sendMessage(chatId, "Enter the number of the card you want to link");
+                    userCondition.setCondition(BotCondition.ENTER_CARD);
+                }
+            }
+
+            else if(userCondition.getCondition().equals(BotCondition.ENTER_CARD))
+            {
+                if(userCondition.getLanguage().equals("russian"))
+                {
+                    sendMessage(chatId, "Заказ принят! Ожидайте обратной связи");
+                }
+                else
+                {
+                    sendMessage(chatId, "Order is accepted! Expect feedback");
+                }
+                userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                chooseCatalogue(chatId, userCondition);
+            }
+
             else
             {
                 sendMessage(chatId, "Command not found");
             }
-
         }
+        //=================================================================================callbackquery
+        else if(update.hasCallbackQuery())
+        {
+            String chatId = update.getCallbackQuery().getFrom().getId().toString();
+            String data = update.getCallbackQuery().getData();
+            UserCondition userCondition = saveUser(chatId);
+            if(userCondition.getCondition().equals(BotCondition.GAMING_LAPS))
+            {
+                if(data.equals("order laptop"))
+                {
+                    if(userCondition.getLanguage().equals("english"))
+                    {
+                        sendMessage(chatId,"Enter your name: ");
+                        userCondition.setCondition(BotCondition.ENTER_NAME);
+                    }
+                    else if(userCondition.getLanguage().equals("russian"))
+                    {
+                        sendMessage(chatId, "Введите свое ФИО: ");
+                        userCondition.setCondition(BotCondition.ENTER_NAME);
+                    }
+                }
+                else if(data.equals("add laptop to cart"))
+                {
+                    if(userCondition.getLanguage().equals("english"))
+                    {
+                        sendMessage(chatId,"Laptop has been added to cart");
+                    }
+                    else
+                    {
+                        sendMessage(chatId, "Ноутбук был добавлен в корзину");
+                    }
+                }
+            }
+        }
+        //-----------------------------------------callbackquery
     }
+
         private void startCommand(String chatId, String username)
         {
             String tgMessage = "Hi " + username + "!";
@@ -165,7 +230,7 @@ public class Bot extends TelegramLongPollingBot
             try{
                 execute(sendMessage);
             }
-            catch(TelegramApiException e){}
+            catch(TelegramApiException e){e.printStackTrace();}
         }
 
         //Хранение состояния, сохранение пользователей бота
@@ -358,56 +423,73 @@ public class Bot extends TelegramLongPollingBot
 
     public void laptopInfo(String chatId, UserCondition userCondition, String message)
     {
-        String text1 = "Добавить в корзину";
-        String text2 = "Заказать";
-        String description = "acer aspire 7";
-        if(userCondition.getLanguage().equals("english"))
-        {
-            text1 = "Add to cart";
-            text2 = "Order";
-        }
+        String description = "";
         switch(message)
         {
             case "acer aspire 7":
+                description = "acer aspire 7";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs1RjZ926Mv7rHfJ7aSfm9net9Po8YwAC9sExG8tlQUuDSxT-iLsM6gEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "acer nitro 5":
+                description = "acer nitro 5";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs1pjZ95sErKj0xgCL1a1Gq9dC1CYAQAC-cExG8tlQUvs7DgzCX95ygEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus tuf gaming":
+                description = "asus tuf gaming";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs1xjZ96LilUMVEgjEld8vVHIHkBQgAAC-sExG8tlQUu1HodAjJ0wOwEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus rog strix":
+                description = "asus rog strix";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs2BjZ97FtNU1cJsPxdskMl9N3goOoAAC_MExG8tlQUvhN68Y6CLsygEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "msi alpha 15":
+                description = "msi alpha 15";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs2RjZ99CJDlpT-zZR8a8MuwJojTneQACD8IxG8tlQUvA9FQuPbcQxgEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "dell xps 13":
+                description = "dell xps 13";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs2ZjZ99fQUd1sZvL0LReScLCO-5RZQACEMIxG8tlQUs2fXFL_GtY9wEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "lenovo ideapad 3":
+                description = "lenovo ideapad 3";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs2xjZ-KVi9bxDhxYMslGI82p7OPK0gACH8IxG8tlQUsijM7lYiACagEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "acer extensa":
+                description = "acer extensa";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs25jZ-LV5sV4P0ghe_ThIsA88-gDtwACIMIxG8tlQUtpmtMAAUGmcbQBAAMCAANzAAMrBA");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus vivobook":
+                description = "asus vivobook";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs3BjZ-LsQI-F5dgn8pYWjzms43T1NAACI8IxG8tlQUtX8Sg68NfFJAEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "hp 15dw":
+                description = "hp 15dw";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs3JjZ-MDJe3L5_WeaikMXlCBLrvGhwACJcIxG8tlQUswWH8nGRXkeQEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "dell vostro":
+                description = "dell vostro";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs3ZjZ-NAWGhJrCtnNKcdBSusS9iRqgACJsIxG8tlQUuBTyBmzYn40AEAAwIAA3MAAysE");
+                showInlineKeyboard(chatId, userCondition);
                 break;
             case "huawei matebook":
+                description = "huawei matebook";
                 sendImg(chatId, description, "AgACAgIAAxkBAAEZs3hjZ-NI5RY_cihXam03cK0_QPXwTgACKMIxG8tlQUv5AjDM2AAB_e0BAAMCAANzAAMrBA");
+                showInlineKeyboard(chatId, userCondition);
                 break;
         }
     }
 
-    public void sendImg(String chatId, String description, String fileId)
+    private void sendImg(String chatId, String description, String fileId)
     {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(new InputFile(fileId));
@@ -415,6 +497,47 @@ public class Bot extends TelegramLongPollingBot
         sendPhoto.setChatId(chatId);
         try{
             execute(sendPhoto);
+        }
+        catch(TelegramApiException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void showInlineKeyboard(String chatId, UserCondition userCondition)
+    {
+        String text1 = "Want to buy?";
+        String text2 = "Order";
+        String text3 = "Add to cart";
+        if(userCondition.getLanguage().equals("russian"))
+        {
+            text1 = "Хотите купить?";
+            text2 = "Купить";
+            text3 = "Добавить в корзину";
+        }
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText(text1);
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton>inlineKeyboardButtons = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButtonOrder = new InlineKeyboardButton();
+        inlineKeyboardButtonOrder.setText(text2);
+        inlineKeyboardButtonOrder.setCallbackData("order laptop");
+
+        InlineKeyboardButton inlineKeyboardButtonToCart = new InlineKeyboardButton();
+        inlineKeyboardButtonToCart.setText(text3);
+        inlineKeyboardButtonToCart.setCallbackData("add laptop to cart");
+
+        inlineKeyboardButtons.add(inlineKeyboardButtonToCart);
+        inlineKeyboardButtons.add(inlineKeyboardButtonOrder);
+
+        List<List<InlineKeyboardButton>> table = new ArrayList<>();
+        table.add(inlineKeyboardButtons);
+        inlineKeyboardMarkup.setKeyboard(table);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        try{
+            execute(sendMessage);
         }
         catch(TelegramApiException e)
         {

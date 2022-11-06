@@ -9,4 +9,7 @@ public interface BotCondition
     String SELECT_CATALOGUE = "selectCatalogue";
     String GAMING_LAPS = "selectGamings";
     String OFFICE_LAPS = "selectOffice";
+    String ENTER_EMAIL = "enterEmailAddress";
+    String ENTER_NAME = "enterName";
+    String ENTER_CARD = "enterCard";
 }
