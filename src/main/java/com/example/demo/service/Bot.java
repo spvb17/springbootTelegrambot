@@ -46,10 +46,10 @@ public class Bot extends TelegramLongPollingBot
         return botConfig.getToken();
     }
     List<UserCondition>users = new ArrayList<>();
+    List<String>userCart = new ArrayList<>();
     @Override
     public void onUpdateReceived(Update update)
     {
-
         if((update.hasMessage() && update.getMessage().hasText()))
         {
             String message = update.getMessage().getText().toLowerCase();
@@ -150,13 +150,28 @@ public class Bot extends TelegramLongPollingBot
             {
                 if(userCondition.getLanguage().equals("russian"))
                 {
-                    sendMessage(chatId, "Введите номер карты которую хотите привязать");
-                    userCondition.setCondition(BotCondition.ENTER_CARD);
+                    if(message.equals("назад в категорию ноутбуков"))
+                    {
+                        userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                        chooseCatalogue(chatId, userCondition);
+                    }
+                    {
+                        sendMessage(chatId, "Введите номер карты которую хотите привязать. Номер карты должен состоять из 12 цифр");
+                        userCondition.setCondition(BotCondition.ENTER_CARD);
+                    }
                 }
                 else
                 {
-                    sendMessage(chatId, "Enter the number of the card you want to link");
-                    userCondition.setCondition(BotCondition.ENTER_CARD);
+                    if(message.equals("back to laptop categories"))
+                    {
+                        userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                        chooseCatalogue(chatId, userCondition);
+                    }
+                    else
+                    {
+                        sendMessage(chatId, "Enter the number of the card you want to link. Card number should contain 12 digits");
+                        userCondition.setCondition(BotCondition.ENTER_CARD);
+                    }
                 }
             }
 
@@ -164,14 +179,46 @@ public class Bot extends TelegramLongPollingBot
             {
                 if(userCondition.getLanguage().equals("russian"))
                 {
-                    sendMessage(chatId, "Заказ принят! Ожидайте обратной связи");
+                    if(message.equals("назад в категорию ноутбуков"))
+                    {
+                        userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                        chooseCatalogue(chatId, userCondition);
+                    }
+                    else
+                    {
+                        if(checkCardNumber(message))
+                        {
+                            sendMessage(chatId, "Заказ принят! Ожидайте обратной связи");
+                            userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                            chooseCatalogue(chatId, userCondition);
+                        }
+                        else
+                        {
+                            sendMessage(chatId, "Карта введена неверно! Попробуйте заново");
+                        }
+                    }
                 }
                 else
                 {
-                    sendMessage(chatId, "Order is accepted! Expect feedback");
+                    if(message.equals("back to laptop categories"))
+                    {
+                        userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                        chooseCatalogue(chatId, userCondition);
+                    }
+                    else
+                    {
+                        if(checkCardNumber(message))
+                        {
+                            sendMessage(chatId, "Order is accepted! Expect feedback");
+                            userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
+                            chooseCatalogue(chatId, userCondition);
+                        }
+                        else
+                        {
+                            sendMessage(chatId, "Card has entered wrong! Try again");
+                        }
+                    }
                 }
-                userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
-                chooseCatalogue(chatId, userCondition);
             }
 
             else
@@ -185,7 +232,7 @@ public class Bot extends TelegramLongPollingBot
             String chatId = update.getCallbackQuery().getFrom().getId().toString();
             String data = update.getCallbackQuery().getData();
             UserCondition userCondition = saveUser(chatId);
-            if(userCondition.getCondition().equals(BotCondition.GAMING_LAPS))
+            if(userCondition.getCondition().equals(BotCondition.GAMING_LAPS) || userCondition.getCondition().equals(BotCondition.OFFICE_LAPS))
             {
                 if(data.equals("order laptop"))
                 {
@@ -427,63 +474,63 @@ public class Bot extends TelegramLongPollingBot
         switch(message)
         {
             case "acer aspire 7":
-                description = "acer aspire 7";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs1RjZ926Mv7rHfJ7aSfm9net9Po8YwAC9sExG8tlQUuDSxT-iLsM6gEAAwIAA3MAAysE");
+                description = "<b>Acer aspire 7</b> \n▪️1920x1080, IPS, 60hz, 15.6\n▪️Core i7-9750h, 6x12 2.6ghz\n▪️GeForce GTX1650 4gb\n▪️RAM 16gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 480000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwjVjaitGeA06gSI6yu3Zhi1YcsUUNQAC9sAxG807UUt-YmErgH2rCgEAAwIAA3gAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "acer nitro 5":
-                description = "acer nitro 5";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs1pjZ95sErKj0xgCL1a1Gq9dC1CYAQAC-cExG8tlQUvs7DgzCX95ygEAAwIAA3MAAysE");
+                description = "<b>Acer nitro 5</b> \n▪️1920x1080, IPS, 144hz, 15.6\n▪️Core i5-12500h, 8x16 2.5ghz\n▪️GeForce RTX3060 6gb\n▪️RAM 16gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 779000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwjljaitkbOG2o-y2k0iTZw3Fq7YFWQAC98AxG807UUsbcFwecmdj6AEAAwIAA20AAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus tuf gaming":
-                description = "asus tuf gaming";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs1xjZ96LilUMVEgjEld8vVHIHkBQgAAC-sExG8tlQUu1HodAjJ0wOwEAAwIAA3MAAysE");
+                description = "<b>Asus tuf gaming</b>\n▪️1920x1080, IPS, 144hz, 15.6\n▪️Core i5-11400h, 6x12 2.7ghz\n▪️GeForce RTX3060 6gb\n▪️RAM 16gb 2.6hz\n▪️SSD 512gb NVME\n<b>Price: 645000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwj9jait_3xBkVF-IysYeVui3wxW_YwAC-MAxG807UUvFqdBU4o2BsQEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus rog strix":
-                description = "asus rog strix";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs2BjZ97FtNU1cJsPxdskMl9N3goOoAAC_MExG8tlQUvhN68Y6CLsygEAAwIAA3MAAysE");
+                description = "<b>Asus rog strix</b>\n▪️2560x1440, IPS, 144hz, 15.6\n▪️Ryzen7 6800h, 8x16 3.2ghz\n▪️GeForce RTX 3080 8gb\n▪️RAM 16gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 925000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwkNjaiuW54KJHf4kznsyIv05dhDceQAC-cAxG807UUu7i6QDNkMWVwEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "msi alpha 15":
-                description = "msi alpha 15";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs2RjZ99CJDlpT-zZR8a8MuwJojTneQACD8IxG8tlQUvA9FQuPbcQxgEAAwIAA3MAAysE");
+                description = "<b>msi alpha 15</b>\n▪️1920x1080, IPS, 144hz, 15.6\n▪️Ryzen5 5600h, 6x12 3.3ghz\n▪️Radeon RX 6600M 8gb\n▪️RAM 8gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 700000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwkVjaiuxreHna56sZ_ZiX8v6_LYNsQAC-sAxG807UUtUKEESGNJHAAEBAAMCAANzAAMrBA");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "dell xps 13":
-                description = "dell xps 13";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs2ZjZ99fQUd1sZvL0LReScLCO-5RZQACEMIxG8tlQUs2fXFL_GtY9wEAAwIAA3MAAysE");
+                description = "<b>Dell xps 13</b>\n▪️1920x1080, IPS, 60hz, 15.6\n▪️Core i5-10310u, 4x8 1.7ghz\n▪️GeForce GTX1650 4gb\n▪️RAM 8gb 2.6hz\n▪️SSD 512gb NVME\n<b>Price: 450000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwv5jajlXqiCZCTxbXyTu7ZBYzS8wTgAC-8AxG807UUsrtRllTF4jGwEAAwIAA3gAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "lenovo ideapad 3":
-                description = "lenovo ideapad 3";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs2xjZ-KVi9bxDhxYMslGI82p7OPK0gACH8IxG8tlQUsijM7lYiACagEAAwIAA3MAAysE");
+                description = "<b>Lenovo ideapad 3</b>\n▪️1920x1080, IPS, 60hz, 15.6\n▪️Core i3-10110u, 2x4 2.1ghz\n▪️Intel UHD Graphics\n▪️RAM 8gb 2.6hz\n▪️SSD 256gb m2\n<b>Price: 230000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwk9jai0jLCVUv0zqVLtVhuDyH_Rv7QACBMExG807UUst6_51mUTEgAEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "acer extensa":
-                description = "acer extensa";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs25jZ-LV5sV4P0ghe_ThIsA88-gDtwACIMIxG8tlQUtpmtMAAUGmcbQBAAMCAANzAAMrBA");
+                description = "<b>Acer extensa</b>\n▪️1920x1080, IPS, 60hz, 15.6\n▪️Ryzen5 3500u, 2x4 2.1ghz\n▪️AMD Radeon Graphics\n▪️RAM 8gb 2.6hz\n▪️SSD 256gb m2\n<b>Price: 279000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwlFjai08VN7OsheVyddBmdiPHZQAAfkAAgXBMRvNO1FLdSCJm-Kj6OABAAMCAANtAAMrBA");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "asus vivobook":
-                description = "asus vivobook";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs3BjZ-LsQI-F5dgn8pYWjzms43T1NAACI8IxG8tlQUtX8Sg68NfFJAEAAwIAA3MAAysE");
+                description = "<b>Asus vivobook</b>\n▪️1920x1080, IPS, 60hz, 15.6\n▪️Ryzen 5 5500u, 6x12 2.1ghz\n▪️AMD Radeon Graphics\n▪️RAM 16gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 400000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwlVjai1ae4hJmBL5YAJP9IDijcGf4QACBsExG807UUv6DdQSjPq_bwEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "hp 15dw":
-                description = "hp 15dw";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs3JjZ-MDJe3L5_WeaikMXlCBLrvGhwACJcIxG8tlQUswWH8nGRXkeQEAAwIAA3MAAysE");
+                description = "<b>Hp 15dw</b>\n▪️1920x1080, TN, 60hz, 15.6\n▪️Core i3-1005G1, 2x4 1.2ghz\n▪️Intel HD Graphics\n▪️RAM 8gb 2.6hz\n▪️SSD 256gb m2\n<b>Price: 275000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwlhjai123tfFwfXBEaAbz1uTkNVktQACB8ExG807UUuL5bGtrfgz1QEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "dell vostro":
-                description = "dell vostro";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs3ZjZ-NAWGhJrCtnNKcdBSusS9iRqgACJsIxG8tlQUuBTyBmzYn40AEAAwIAA3MAAysE");
+                description = "<b>Dell vostro</b>\n▪️1920x1080, TN, 60hz, 15.6\n▪️Core i5-1135G7 4x8 2.4ghz\n▪️Intel Iris xe Graphics\n▪️RAM 8gb 3.2hz\n▪️SSD 1024gb m2\n<b>Price: 410000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwlxjai2O02bweDIwV8knhPZifNOv-AACCMExG807UUuEa17_lNXUSAEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "huawei matebook":
-                description = "huawei matebook";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZs3hjZ-NI5RY_cihXam03cK0_QPXwTgACKMIxG8tlQUv5AjDM2AAB_e0BAAMCAANzAAMrBA");
+                description = "<b>Huawei matebook</b>\n▪️2160x1440, IPS, 60hz, 14\n▪️Core i5-1135G7 4x8 2.4ghz\n▪️Intel Iris xe Graphics\n▪️RAM 16gb 2.6hz\n▪️SSD 512gb NVME\n<b>Price: 530000tg</b>";
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZwl9jai2pHzfPFnaxA91zcWgqpEKsdwACCcExG807UUtIYPiuRRHOlgEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
         }
@@ -495,6 +542,7 @@ public class Bot extends TelegramLongPollingBot
         sendPhoto.setPhoto(new InputFile(fileId));
         sendPhoto.setCaption(description);
         sendPhoto.setChatId(chatId);
+        sendPhoto.setParseMode("HTML");
         try{
             execute(sendPhoto);
         }
@@ -507,13 +555,13 @@ public class Bot extends TelegramLongPollingBot
     private void showInlineKeyboard(String chatId, UserCondition userCondition)
     {
         String text1 = "Want to buy?";
-        String text2 = "Order";
-        String text3 = "Add to cart";
+        String text2 = "Order✅";
+        String text3 = "Add to cart\uD83D\uDED2";
         if(userCondition.getLanguage().equals("russian"))
         {
             text1 = "Хотите купить?";
-            text2 = "Купить";
-            text3 = "Добавить в корзину";
+            text2 = "Купить✅";
+            text3 = "Добавить в корзину\uD83D\uDED2";
         }
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(text1);
@@ -543,5 +591,14 @@ public class Bot extends TelegramLongPollingBot
         {
             e.printStackTrace();
         }
+    }
+
+    private boolean checkCardNumber(String message)
+    {
+        if(message.matches("[0-9]*") && message.length()==12)
+        {
+            return true;
+        }
+        return false;
     }
 }

@@ -1,11 +1,24 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class UserCondition
 {
     private String chatId;
     private String condition;
     private String language;
     private String name;
+    private List<String>userCart = new ArrayList<>();
+
+    public List<String> getUserCart() {
+        return userCart;
+    }
+
+    public void setUserCart(List<String> userCart) {
+        this.userCart = userCart;
+    }
 
     public String getName() {
         return name;
@@ -46,6 +59,7 @@ public class UserCondition
                 ", condition='" + condition + '\'' +
                 ", language='" + language + '\'' +
                 ", name='" + name + '\'' +
+                ", userCart=" + userCart +
                 '}';
     }
 }

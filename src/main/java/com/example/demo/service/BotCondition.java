@@ -12,4 +12,5 @@ public interface BotCondition
     String ENTER_EMAIL = "enterEmailAddress";
     String ENTER_NAME = "enterName";
     String ENTER_CARD = "enterCard";
+    String ADD_TO_CART = "addToCart";
 }
