@@ -10,13 +10,16 @@ All methods and instructions on how to use API were taken from the page below\
 https://core.telegram.org/
 
 ## Description
-This is a telegram bot for a laptop shop. Here you can find and order laptops and their components. Each user has their own shopping cart, purchase history.
-
+This is a telegram bot for a laptop shop. Here you can find and order laptops and their components. Each user has their own shopping cart, purchase history.\
 When you start the bot for the first time, the language will be requested, then the interface will be configured based on the choice.
 >The main menu looks like this:
-<img src="https://user-images.githubusercontent.com/90541044/201676295-b5f35276-d332-4603-ba53-4272fe942fbd.png">
+><img src="https://user-images.githubusercontent.com/90541044/201676295-b5f35276-d332-4603-ba53-4272fe942fbd.png">
 
 From here you can go to the catalogue which is divided into gaming and office laptops.  Depending on the choice, a catalogue of laptops is provided. After selecting a specific laptop, a message is sent to the user with a description of the laptop. Below the description is sent to the inlineKeyboard with graphs to buy and add to cart. 
+
+## Difficulties
+I ran into several difficulties when writing the logic of the bot. Problems arose due to the fact that the solution to these problems was not described in the telegram API itself. The first one is <b>storing the state of the bot</b>, and intercepting the user's message depending on this state. The second one is <b>storing the bot state for each user separately</b>. The problem was that if several users use the bot, the logic breaks, and data from one user's chat is mixed with data from another user's chat.
+
 
 
 
