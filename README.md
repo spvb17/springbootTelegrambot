@@ -24,10 +24,17 @@ If you do not determine the state of the bot, then it turns out that all message
 * <b>Storing the bot state for each user separately.</b>\
 The problem was that if several users use the bot, the logic breaks, and data from one user's chat is mixed with data from another user's chat.
 
-Below I have provided the solutions I used
+Below I have provided the solutions I came up with
 
 ## Solutions
+Solving the first problem
+>To solve the first problem, I created the BotCondition interface, in which I created the fields below.
+<img src="https://user-images.githubusercontent.com/90541044/201696117-60662a27-6901-4d22-a7c9-2894e24c868d.png" width="200px">\
+In the example below, if /start was pressed by the user, then the bot state changes to SELECT_LANG. The next message sent by the user will be taken as the language choice, since the bot's condition is SELECT_LANG. After choosing the language, the state of the bot will change again, and subsequent messages from the user will be received properly. The state of the bot needs to be checked with conditional constructs with each update. The state of the bot can be moved both forward and backward, based on the logic of your bot.
+<img src="https://user-images.githubusercontent.com/90541044/201696711-7bb4e5e8-746c-4b4e-9e33-32c1562d4b3d.png">
 
+Solving the second problem
+>
 
 
 

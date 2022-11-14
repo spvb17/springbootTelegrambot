@@ -9,6 +9,16 @@ public class UserCondition
     private String condition;
     private String language;
     private String name;
+    private String cardNumber;
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
     private List<String>userCart = new ArrayList<>();
 
     public List<String> getUserCart() {

@@ -189,6 +189,7 @@ public class Bot extends TelegramLongPollingBot
                         if(checkCardNumber(message))
                         {
                             sendMessage(chatId, "Заказ принят! Ожидайте обратной связи");
+                            userCondition.setCardNumber(message);
                             userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
                             chooseCatalogue(chatId, userCondition);
                         }
@@ -210,6 +211,7 @@ public class Bot extends TelegramLongPollingBot
                         if(checkCardNumber(message))
                         {
                             sendMessage(chatId, "Order is accepted! Expect feedback");
+                            userCondition.setCardNumber(message);
                             userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
                             chooseCatalogue(chatId, userCondition);
                         }
