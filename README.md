@@ -31,16 +31,16 @@ Solving the first problem
 >To solve the first problem, I created the BotCondition interface, in which I created the fields for each bot state level.
 In the example below, if /start was pressed by the user, then the bot state changes to SELECT_LANG. The next message sent by the user will be taken as the language choice, since the bot's condition is SELECT_LANG. After choosing the language, the state of the bot will change again, and subsequent messages from the user will be received properly. The state of the bot needs to be checked with conditional constructs with each update. 
 Below is an example of code.\
-><img src="https://user-images.githubusercontent.com/90541044/201696711-7bb4e5e8-746c-4b4e-9e33-32c1562d4b3d.png" width="500px">
+><img src="https://user-images.githubusercontent.com/90541044/201696711-7bb4e5e8-746c-4b4e-9e33-32c1562d4b3d.png" width="500px">\
 It should be noted that the state of the bot can be moved both forward and backward, based on the logic of your bot.
 
 Solving the second problem
 >To solve the second problem, I created a userCondition class in which I created fields, in accordance with what data needs to be stored for each user.
 Created an Arraylist where UserCondition objects will be stored. It means that each bot user will be stored here.\
 I also created a method that will return a user object. The method checks if the user is in the list, if not, the method adds him to our list.
-><img src="https://user-images.githubusercontent.com/90541044/201701826-7560510a-2893-4a27-9587-27febd7f696c.png">
+><img src="https://user-images.githubusercontent.com/90541044/201701826-7560510a-2893-4a27-9587-27febd7f696c.png">\
 Next, I created an object of the UserCondition class and assigned the value of the saveUser method to it.\
-Now, with each update, each user will have their own state, and the data will not be mixed. Further for each user the value of fields is appropriated. Further, for each user, its own field value is assigned with each update.
+Now, with each update, each user will have their own state, and the data will not be mixed. Further for each user the value of fields is appropriated. Further, for each user, its own field value is assigned with each update. An example is shown in the first problem solving chapter.
 
 
 
