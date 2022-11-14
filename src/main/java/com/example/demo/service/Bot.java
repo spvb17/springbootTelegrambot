@@ -17,16 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Component
@@ -115,7 +107,14 @@ public class Bot extends TelegramLongPollingBot
                 }
                 else if(message.equals("подписаться на рассылку") || message.equals("subscribe to newsletter"))
                 {
-                    sendMessage(chatId, "Enter your email: ");
+                    if(userCondition.getLanguage().equals("english"))
+                    {
+                        sendMessage(chatId, "Enter your email \n/back - to exit");
+                    }
+                    else
+                    {
+                        sendMessage(chatId, "Введите свою почту \n/back - чтобы выйти");
+                    }
                     userCondition.setCondition(BotCondition.ENTER_EMAIL);
                 }
 
@@ -241,26 +240,40 @@ public class Bot extends TelegramLongPollingBot
             {
                 if(userCondition.getLanguage().equals("english"))
                 {
-                    if(isValid(message))
+                    if(!message.equals("/back"))
                     {
-                        sendMessage(chatId, "Your email accepted, check your email");
-                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                        if(isValid(message))
+                        {
+                            sendMessage(chatId, "Your email accepted, check your email");
+                            userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                        }
+                        else
+                        {
+                            sendMessage(chatId, "Email address entered wrong, try again!");
+                        }
                     }
                     else
                     {
-                        sendMessage(chatId, "Email address entered wrong, try again!");
+                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
                     }
                 }
                 else
                 {
-                    if(isValid(message))
+                    if(!message.equals("/back"))
                     {
-                        sendMessage(chatId, "Ваша почта сохранена, проверьте ее");
-                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                        if(isValid(message))
+                        {
+                            sendMessage(chatId, "Ваша почта сохранена, проверьте ее");
+                            userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                        }
+                        else
+                        {
+                            sendMessage(chatId, "Неправильно ввели, попробуйте снова!");
+                        }
                     }
                     else
                     {
-                        sendMessage(chatId, "Неправильно ввели, попробуйте снова!");
+                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
                     }
                 }
             }
