@@ -10,6 +10,15 @@ public class UserCondition
     private String language;
     private String name;
     private String cardNumber;
+    private String userEmail;
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
     public String getCardNumber() {
         return cardNumber;

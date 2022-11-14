@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.config.BotConfig;
+import com.sun.tools.javac.Main;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -16,8 +17,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 @Component
 public class Bot extends TelegramLongPollingBot
@@ -103,7 +113,11 @@ public class Bot extends TelegramLongPollingBot
                     userCondition.setCondition(BotCondition.SELECT_CATALOGUE);
                     chooseCatalogue(chatId, userCondition);
                 }
-
+                else if(message.equals("подписаться на рассылку") || message.equals("subscribe to newsletter"))
+                {
+                    sendMessage(chatId, "Enter your email: ");
+                    userCondition.setCondition(BotCondition.ENTER_EMAIL);
+                }
 
             }
 
@@ -219,6 +233,34 @@ public class Bot extends TelegramLongPollingBot
                         {
                             sendMessage(chatId, "Card has entered wrong! Try again");
                         }
+                    }
+                }
+            }
+
+            else if(userCondition.getCondition().equals(BotCondition.ENTER_EMAIL))
+            {
+                if(userCondition.getLanguage().equals("english"))
+                {
+                    if(isValid(message))
+                    {
+                        sendMessage(chatId, "Your email accepted, check your email");
+                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                    }
+                    else
+                    {
+                        sendMessage(chatId, "Email address entered wrong, try again!");
+                    }
+                }
+                else
+                {
+                    if(isValid(message))
+                    {
+                        sendMessage(chatId, "Ваша почта сохранена, проверьте ее");
+                        userCondition.setCondition(BotCondition.CHOOSE_OPERATION);
+                    }
+                    else
+                    {
+                        sendMessage(chatId, "Неправильно ввели, попробуйте снова!");
                     }
                 }
             }
@@ -340,6 +382,7 @@ public class Bot extends TelegramLongPollingBot
                 row = new KeyboardRow();
                 row.add("Shopping cart");
                 row.add("Purchase history");
+                row.add("Subscribe to newsletter");
                 keyboard.add(row);
                 row = new KeyboardRow();
                 row.add("Select language");
@@ -354,6 +397,7 @@ public class Bot extends TelegramLongPollingBot
                 row = new KeyboardRow();
                 row.add("Корзина");
                 row.add("Исторория покупок");
+                row.add("Подписаться на рассылку");
                 keyboard.add(row);
                 row = new KeyboardRow();
                 row.add("Выбор языка");
@@ -602,5 +646,20 @@ public class Bot extends TelegramLongPollingBot
             return true;
         }
         return false;
+    }
+
+    private boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+        {
+            return false;
+        }
+        return pat.matcher(email).matches();
     }
 }
