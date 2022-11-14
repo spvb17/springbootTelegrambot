@@ -475,7 +475,7 @@ public class Bot extends TelegramLongPollingBot
         {
             case "acer aspire 7":
                 description = "<b>Acer aspire 7</b> \n▪️1920x1080, IPS, 60hz, 15.6\n▪️Core i7-9750h, 6x12 2.6ghz\n▪️GeForce GTX1650 4gb\n▪️RAM 16gb 3.2hz\n▪️SSD 512gb NVME\n<b>Price: 480000tg</b>";
-                sendImg(chatId, description, "AgACAgIAAxkBAAEZwjVjaitGeA06gSI6yu3Zhi1YcsUUNQAC9sAxG807UUt-YmErgH2rCgEAAwIAA3gAAysE");
+                sendImg(chatId, description, "AgACAgIAAxkBAAEZ8QJjckXvWJ5gi5YILggNNe1w6r540AAC8MExG6sVmUv8Aca8sKL9jgEAAwIAA3MAAysE");
                 showInlineKeyboard(chatId, userCondition);
                 break;
             case "acer nitro 5":
