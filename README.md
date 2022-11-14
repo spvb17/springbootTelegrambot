@@ -9,6 +9,8 @@ https://t.me/springbootProject_bot
 All methods and instructions on how to use API were taken from the page below\
 https://core.telegram.org/
 
+Bot is not available right now because of deploying problems
+
 ## Description
 This is a telegram bot for a laptop shop. Here you can find and order laptops and their components. Each user has their own shopping cart, purchase history.\
 When you start the bot for the first time, the language will be requested, then the interface will be configured based on the choice.
