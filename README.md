@@ -37,10 +37,14 @@ It should be noted that the state of the bot can be moved both forward and backw
 Solving the second problem
 >To solve the second problem, I created a UserCondition class in which I created fields, in accordance with what data needs to be stored for each user.
 Created an Arraylist where UserCondition objects will be stored. It means that each bot user will be stored here.\
-I also created a method that will return a user object. The method checks if the user is in the list, if not, the method adds him to our list.
+I also created a method that will return a user object. The method checks if the user is in the list, if not, the method adds him to our list.\
 ><img src="https://user-images.githubusercontent.com/90541044/201701826-7560510a-2893-4a27-9587-27febd7f696c.png" width="500px">\
 Next, I created an object of the UserCondition class and assigned the value of the saveUser method to it.\
-Now, with each update, each user will have their own state, and the data will not be mixed, each user is assigned its own field value for each update. An example is shown in the first problem solving chapter.
+Now, with each update, each user will have their own state, and the data will not be mixed, each user is assigned its own field value for each update. An example is shown in the first problem solving chapter. 
+
+fsdfsa
+fsdflksj
+
 
 
 
